@@ -33,7 +33,12 @@
 			{{ userSubAdminsGroupsLabels }}
 		</div>
 		<div class="quota">
-			{{ userQuota }} {{ usedSpace }}
+			{{ userQuota }} ({{ usedSpace }})
+			<progress
+				class="quota-user-progress"
+				:class="{'warn': usedQuota > 80}"
+				:value="usedQuota"
+				max="100" />
 		</div>
 		<div v-if="showConfig.showLanguages" class="languages">
 			{{ userLanguage.name }}
@@ -136,19 +141,22 @@ export default {
 		},
 		usedSpace() {
 			if (this.user.quota.used) {
-				return t('settings', 'of {size} used', { size: OC.Util.humanFileSize(this.user.quota.used) })
+				return t('settings', '{size} used', { size: OC.Util.humanFileSize(this.user.quota.used) })
 			}
-			return t('settings', 'of {size} used', { size: OC.Util.humanFileSize(0) })
+			return t('settings', '{size} used', { size: OC.Util.humanFileSize(0) })
 		},
 		canEdit() {
 			return getCurrentUser().uid !== this.user.id && this.user.id !== 'admin'
 		},
 		userQuota() {
-			if (this.user.quota.quota >= 0) {
-				return t('settings', '{size}', { size: OC.Util.humanFileSize(this.user.quota.quota) })
+			if (this.user.quota.quota === 'none') {
+				return t('settings', 'Unlimited')
 			}
-			return t('settings', '{size}', { size: OC.Util.humanFileSize(0) })
-		}
+			if (this.user.quota.quota >= 0) {
+				return OC.Util.humanFileSize(this.user.quota.quota)
+			}
+			return OC.Util.humanFileSize(0)
+		},
 
 	},
 	methods: {
