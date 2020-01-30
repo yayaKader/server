@@ -25,10 +25,17 @@ declare(strict_types=1);
 namespace OC\Preview\Storage;
 
 use OC\Files\AppData\AppData;
+use OC\SystemConfig;
+use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 
 class Root extends AppData {
+
+	public function __construct(IRootFolder $rootFolder, SystemConfig $systemConfig) {
+		parent::__construct($rootFolder, $systemConfig, 'preview');
+	}
+
 
 	public function getFolder(string $name): ISimpleFolder {
 		$internalFolder = $this->getInternalFolder($name);
