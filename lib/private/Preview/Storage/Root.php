@@ -66,12 +66,6 @@ class Root extends AppData {
 	}
 
 	private function getInternalFolder(string $name): string {
-		return implode('/',
-			str_split(
-				substr(md5($name),
-					0, 7
-				)
-			)
-		) . '/' . $name;
+		return implode('/', str_split(substr(md5($name), 0, 7))) . '/' . $name;
 	}
 }
