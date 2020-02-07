@@ -126,7 +126,7 @@ class BackgroundCleanupJob extends TimedJob {
 			return [];
 		}
 
-		$like = $data['path'] . '/_/_/_/_/_/_/_/%';
+		$like = $this->connection->escapeLikeParameter($data['path']) . '/_/_/_/_/_/_/_/%';
 
 		$qb = $this->connection->getQueryBuilder();
 		$qb->select('a.name')
