@@ -64,11 +64,18 @@
 					@done="passwordResetFinished" />
 			</div>
 		</transition>
+		<div>
+			<PasswordLessLoginForm
+				:username.sync="user"
+				:redirect-url="redirectUrl"
+				@submit="loading = true" />
+		</div>
 	</div>
 </template>
 
 <script>
 import LoginForm from '../components/login/LoginForm.vue'
+import PasswordLessLoginForm from '../components/login/PasswordLessLoginForm.vue'
 import ResetPassword from '../components/login/ResetPassword.vue'
 import UpdatePassword from '../components/login/UpdatePassword.vue'
 
@@ -76,6 +83,7 @@ export default {
 	name: 'Login',
 	components: {
 		LoginForm,
+		PasswordLessLoginForm,
 		ResetPassword,
 		UpdatePassword,
 	},
