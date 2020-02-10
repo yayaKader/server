@@ -35,6 +35,7 @@
 
 namespace OCA\Files_External\Lib\Storage;
 
+use Icewind\SMB\ACL;
 use Icewind\SMB\BasicAuth;
 use Icewind\SMB\Exception\AlreadyExistsException;
 use Icewind\SMB\Exception\ConnectException;
@@ -96,7 +97,7 @@ class SMB extends Common implements INotifyStorage {
 		if (isset($params['auth'])) {
 			$auth = $params['auth'];
 		} else if (isset($params['user']) && isset($params['password']) && isset($params['share'])) {
-			list($workgroup, $user) = $this->splitUser($params['user']);
+			[$workgroup, $user] = $this->splitUser($params['user']);
 			$auth = new BasicAuth($user, $workgroup, $params['password']);
 		} else {
 			throw new \Exception('Invalid configuration, no credentials provided');
@@ -132,7 +133,7 @@ class SMB extends Common implements INotifyStorage {
 	private function splitUser($user) {
 		if (strpos($user, '/')) {
 			return explode('/', $user, 2);
-		} elseif (strpos($user, '\\')) {
+		} else if (strpos($user, '\\')) {
 			return explode('\\', $user);
 		} else {
 			return [null, $user];
@@ -184,7 +185,7 @@ class SMB extends Common implements INotifyStorage {
 		} catch (ForbiddenException $e) {
 			// with php-smbclient, this exceptions is thrown when the provided password is invalid.
 			// Possible is also ForbiddenException with a different error code, so we check it.
-			if($e->getCode() === 1) {
+			if ($e->getCode() === 1) {
 				$this->throwUnavailable($e);
 			}
 			throw $e;
@@ -198,6 +199,24 @@ class SMB extends Common implements INotifyStorage {
 	protected function throwUnavailable(\Exception $e) {
 		$this->logger->logException($e, ['message' => 'Error while getting file info']);
 		throw new StorageAuthException($e->getMessage(), $e);
+	}
+
+	/**
+	 * get the acl from fileinfo that is relevant for the configured user
+	 *
+	 * @param IFileInfo $file
+	 * @return ACL|null
+	 */
+	private function getACL(IFileInfo $file): ?ACL {
+		$acls = $file->getAcls();
+		foreach ($acls as $user => $acl) {
+			[, $user] = explode('\\', $user); // strip domain
+			if ($user === $this->server->getAuth()->getUsername()) {
+				return $acl;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -217,6 +236,17 @@ class SMB extends Common implements INotifyStorage {
 					// the isHidden check is done before checking the config boolean to ensure that the metadata is always fetch
 					// so we trigger the below exceptions where applicable
 					$hide = $file->isHidden() && !$this->showHidden;
+
+					if ($acl = $this->getACL($file)) {
+						// if there is no explicit deny, we assume it's allowed
+						// this doesn't take inheritance fully into account but if read permissions is denied for a parent we wouldn't be in this folder
+						// additionally, it's better to have false negatives here then false positives
+						if ($acl->denies(ACL::MASK_READ) || $acl->denies(ACL::MASK_EXECUTE)) {
+							$this->logger->debug('Hiding non readable entry ' . $file->getName());
+							return false;
+						}
+					}
+
 					if ($hide) {
 						$this->logger->debug('hiding hidden file ' . $file->getName());
 					}
@@ -472,7 +502,7 @@ class SMB extends Common implements INotifyStorage {
 		}
 
 		try {
-			$this->statCache = array();
+			$this->statCache = [];
 			$content = $this->share->dir($this->buildPath($path));
 			foreach ($content as $file) {
 				if ($file->isDirectory()) {
