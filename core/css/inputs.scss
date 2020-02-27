@@ -89,7 +89,6 @@ div[contenteditable=true],
 		background-color: var(--color-primary-element);
 		border-color: var(--color-primary-element);
 		color: var(--color-primary-text);
-		cursor: pointer;
 
 		/* Apply border to primary button if on log in page (and not in a dark container) or if in header */
 		#body-login :not(.body-login-container) &,
@@ -112,7 +111,23 @@ div[contenteditable=true],
 			// opacity is already defined to .5 if disabled
 			background-color: var(--color-primary-element);
 			color: var(--color-primary-text-dark);
+		}
+	}
+}
+button, .button {
+	&.primary {
+		cursor: pointer;
+
+		* {
+			cursor: pointer;
+		}
+
+		&:disabled {
 			cursor: default;
+
+			* {
+				cursor: default;
+			}
 		}
 	}
 }
