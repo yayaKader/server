@@ -32,13 +32,15 @@
 		<div v-if="subAdminsGroups.length > 0 && settings.isAdmin" class="subAdminsGroups">
 			{{ userSubAdminsGroupsLabels }}
 		</div>
-		<div class="quota">
-			{{ userQuota }} ({{ usedSpace }})
-			<progress
-				class="quota-user-progress"
-				:class="{'warn': usedQuota > 80}"
-				:value="usedQuota"
-				max="100" />
+		<div class="userQuota">
+			<div class="quota">
+				{{ userQuota }} ({{ usedSpace }})
+				<progress
+					class="quota-user-progress"
+					:class="{'warn': usedQuota > 80}"
+					:value="usedQuota"
+					max="100" />
+			</div>
 		</div>
 		<div v-if="showConfig.showLanguages" class="languages">
 			{{ userLanguage.name }}
