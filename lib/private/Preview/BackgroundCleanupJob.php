@@ -66,11 +66,15 @@ class BackgroundCleanupJob extends TimedJob {
 	public function run($argument) {
 		foreach ($this->getDeletedFiles() as $fileId) {
 			try {
-				$preview = $this->previewFolder->getFolder($fileId);
+				var_dump("CLEANING UP: " . $fileId);
+				$preview = $this->previewFolder->getFolder((string)$fileId);
 				$preview->delete();
+				var_dump("CLEANED UP: " . $fileId);
 			} catch (NotFoundException $e) {
+				var_dump("!!!!!!NOT FOUND: " . $fileId);
 				// continue
 			} catch (NotPermittedException $e) {
+				var_dump("!!!! NOT PERMITTED: " . $fileId);
 				// continue
 			}
 		}
