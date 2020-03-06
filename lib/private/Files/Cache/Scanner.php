@@ -125,11 +125,13 @@ class Scanner extends BasicEmitter implements IScanner {
 	 * @param int $parentId
 	 * @param array | null $cacheData existing data in the cache for the file to be scanned
 	 * @param bool $lock set to false to disable getting an additional read lock during scanning
-	 * @return array an array of metadata of the scanned file
+	 *
+	 * @return array|null an array of metadata of the scanned file
+	 *
 	 * @throws \OC\ServerNotAvailableException
 	 * @throws \OCP\Lock\LockedException
 	 */
-	public function scanFile($file, $reuseExisting = 0, $parentId = -1, $cacheData = null, $lock = true) {
+	public function scanFile($file, $reuseExisting = 0, $parentId = -1, $cacheData = null, $lock = true): ?array {
 		if ($file !== '') {
 			try {
 				$this->storage->verifyPath(dirname($file), basename($file));
@@ -321,9 +323,10 @@ class Scanner extends BasicEmitter implements IScanner {
 	 * @param bool $recursive
 	 * @param int $reuse
 	 * @param bool $lock set to false to disable getting an additional read lock during scanning
-	 * @return array an array of the meta data of the scanned file or folder
+	 *
+	 * @return array|null an array of the meta data of the scanned file or folder
 	 */
-	public function scan($path, $recursive = self::SCAN_RECURSIVE, $reuse = -1, $lock = true) {
+	public function scan($path, $recursive = self::SCAN_RECURSIVE, $reuse = -1, $lock = true): ?array {
 		if ($reuse === -1) {
 			$reuse = ($recursive === self::SCAN_SHALLOW) ? self::REUSE_ETAG | self::REUSE_SIZE : self::REUSE_ETAG;
 		}

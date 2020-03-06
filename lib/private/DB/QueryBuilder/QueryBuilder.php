@@ -1168,9 +1168,10 @@ class QueryBuilder implements IQueryBuilder {
 	 * Returns the table name quoted and with database prefix as needed by the implementation
 	 *
 	 * @param string $table
-	 * @return string
+	 *
+	 * @return null|string
 	 */
-	public function getTableName($table) {
+	public function getTableName($table): ?string {
 		if ($table instanceof IQueryFunction) {
 			return (string) $table;
 		}
@@ -1198,9 +1199,10 @@ class QueryBuilder implements IQueryBuilder {
 	 *
 	 * @param string $column
 	 * @param string $tableAlias
-	 * @return string
+	 *
+	 * @return null|string
 	 */
-	public function getColumnName($column, $tableAlias = '') {
+	public function getColumnName($column, $tableAlias = ''): ?string {
 		if ($tableAlias !== '') {
 			$tableAlias .= '.';
 		}
@@ -1212,9 +1214,10 @@ class QueryBuilder implements IQueryBuilder {
 	 * Returns the column name quoted and with table alias prefix as needed by the implementation
 	 *
 	 * @param string $alias
-	 * @return string
+	 *
+	 * @return null|string
 	 */
-	public function quoteAlias($alias) {
+	public function quoteAlias($alias): ?string {
 		if ($alias === '' || $alias === null) {
 			return $alias;
 		}

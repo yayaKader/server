@@ -100,9 +100,9 @@ class ProviderFactory implements IProviderFactory {
 	/**
 	 * Create the federated share provider
 	 *
-	 * @return FederatedShareProvider
+	 * @return FederatedShareProvider|null
 	 */
-	protected function federatedShareProvider() {
+	protected function federatedShareProvider(): ?FederatedShareProvider {
 		if ($this->federatedProvider === null) {
 			/*
 			 * Check if the app is enabled
@@ -155,9 +155,9 @@ class ProviderFactory implements IProviderFactory {
 	/**
 	 * Create the federated share provider
 	 *
-	 * @return ShareByMailProvider
+	 * @return ShareByMailProvider|null
 	 */
-	protected function getShareByMailProvider() {
+	protected function getShareByMailProvider(): ?ShareByMailProvider {
 		if ($this->shareByMailProvider === null) {
 			/*
 			 * Check if the app is enabled
@@ -193,11 +193,11 @@ class ProviderFactory implements IProviderFactory {
 	/**
 	 * Create the circle share provider
 	 *
-	 * @return FederatedShareProvider
+	 * @return \OCA\Circles\ShareByCircleProvider|null
 	 *
 	 * @suppress PhanUndeclaredClassMethod
 	 */
-	protected function getShareByCircleProvider() {
+	protected function getShareByCircleProvider(): ?\OCA\Circles\ShareByCircleProvider {
 
 		if ($this->circlesAreNotAvailable) {
 			return null;

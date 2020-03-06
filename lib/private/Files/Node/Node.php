@@ -178,11 +178,12 @@ class Node implements \OCP\Files\Node {
 	}
 
 	/**
-	 * @return int
+	 * @return int|null
+	 *
 	 * @throws InvalidPathException
 	 * @throws NotFoundException
 	 */
-	public function getId() {
+	public function getId(): ?int {
 		return $this->getFileInfo()->getId();
 	}
 

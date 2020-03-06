@@ -726,8 +726,12 @@ class DAV extends Common {
 		}
 	}
 
-	/** {@inheritdoc} */
-	public function getETag($path) {
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @return null|string
+	 */
+	public function getETag($path): ?string {
 		$this->init();
 		$path = $this->cleanPath($path);
 		$response = $this->propfind($path);

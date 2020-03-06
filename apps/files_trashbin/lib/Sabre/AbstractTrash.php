@@ -51,7 +51,7 @@ abstract class AbstractTrash implements ITrash {
 		return $this->data->getDeletedTime();
 	}
 
-	public function getFileId(): int {
+	public function getFileId(): ?int {
 		return $this->data->getId();
 	}
 
