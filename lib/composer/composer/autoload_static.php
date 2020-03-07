@@ -103,6 +103,7 @@ class ComposerStaticInit53792487c5a8370acc0b06b1a864ff4c
         'OCP\\App\\AppPathNotFoundException' => __DIR__ . '/../../..' . '/lib/public/App/AppPathNotFoundException.php',
         'OCP\\App\\IAppManager' => __DIR__ . '/../../..' . '/lib/public/App/IAppManager.php',
         'OCP\\App\\ManagerEvent' => __DIR__ . '/../../..' . '/lib/public/App/ManagerEvent.php',
+        'OCP\\Authentication\\Events\\LoginFailedEvent' => __DIR__ . '/../../..' . '/lib/public/Authentication/Events/LoginFailedEvent.php',
         'OCP\\Authentication\\Exceptions\\CredentialsUnavailableException' => __DIR__ . '/../../..' . '/lib/public/Authentication/Exceptions/CredentialsUnavailableException.php',
         'OCP\\Authentication\\Exceptions\\PasswordUnavailableException' => __DIR__ . '/../../..' . '/lib/public/Authentication/Exceptions/PasswordUnavailableException.php',
         'OCP\\Authentication\\IApacheBackend' => __DIR__ . '/../../..' . '/lib/public/Authentication/IApacheBackend.php',

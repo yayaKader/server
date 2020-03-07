@@ -26,6 +26,8 @@ declare(strict_types=1);
 namespace OC\Authentication\Login;
 
 use OC\Core\Controller\LoginController;
+use OCP\Authentication\Events\LoginFailedEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ILogger;
 
 class LoggedInCheckCommand extends ALoginCommand {
@@ -43,6 +45,11 @@ class LoggedInCheckCommand extends ALoginCommand {
 			$ip = $loginData->getRequest()->getRemoteAddress();
 
 			$this->logger->warning("Login failed: $username (Remote IP: $ip)");
+
+
+			/** @var IEventDispatcher $eventDispatcher */
+			$eventDispatcher = \OC::$server->query(IEventDispatcher::class);
+			$eventDispatcher->dispatchTyped(new LoginFailedEvent($username));
 
 			return LoginResult::failure($loginData, LoginController::LOGIN_MSG_INVALIDPASSWORD);
 		}
