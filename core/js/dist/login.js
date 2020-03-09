@@ -25558,7 +25558,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     completeAuthentication: function completeAuthentication(challenge) {
       console.debug('TIME TO COMPLETE');
-      return Object(_service_WebAuthnAuthenticationService__WEBPACK_IMPORTED_MODULE_0__["finishAuthentication"])(challenge).then(function (data) {
+      return Object(_service_WebAuthnAuthenticationService__WEBPACK_IMPORTED_MODULE_0__["finishAuthentication"])(JSON.stringify(challenge)).then(function (data) {
         console.debug(data);
       }).catch(function (error) {
         console.debug('GOT AN ERROR WHILE SUBMITTING CHALLENGE!');

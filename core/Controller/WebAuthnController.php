@@ -58,7 +58,7 @@ class WebAuthnController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 * @PublicPage
-	 * @UseSssion
+	 * @UseSession
 	 */
 	public function startAuthentication(string $uid): JSONResponse {
 		$this->logger->debug('Starting WebAuthn login');
@@ -83,7 +83,7 @@ class WebAuthnController extends Controller {
 		}
 
 		// Obtain the publicKeyCredentialOptions from when we started the registration
-		$publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions::createFromArray($this->session->get(self::WEBAUTHN_LOGIN));
+		$publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions::createFromString($this->session->get(self::WEBAUTHN_LOGIN));
 
 		$this->webAuthnManger->finishAuthentication($publicKeyCredentialRequestOptions, $data);
 

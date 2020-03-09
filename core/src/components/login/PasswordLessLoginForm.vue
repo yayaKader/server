@@ -116,7 +116,7 @@ export default {
 		},
 		completeAuthentication(challenge) {
 			console.debug('TIME TO COMPLETE')
-			return finishAuthentication(challenge)
+			return finishAuthentication(JSON.stringify(challenge))
 				.then(data => {
 					console.debug(data)
 				})

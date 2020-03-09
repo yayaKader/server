@@ -192,6 +192,7 @@ class Manager {
 		);
 
 		try {
+
 			// Load the data
 			$publicKeyCredential = $publicKeyCredentialLoader->load($data);
 			$response = $publicKeyCredential->getResponse();
