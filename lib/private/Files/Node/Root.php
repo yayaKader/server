@@ -263,9 +263,9 @@ class Root extends Folder implements IRootFolder {
 	}
 
 	/**
-	 * @return int
+	 * @return int|null
 	 */
-	public function getId() {
+	public function getId(): ?int {
 		return null;
 	}
 
