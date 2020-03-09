@@ -19,6 +19,9 @@
 	<dependencies>
 		<nextcloud min-version="19" max-version="19"/>
 	</dependencies>
+	<background-jobs>
+		<job>OCA\ContactsInteraction\BackgroundJob\CleanupJob</job>
+	</background-jobs>
 	<sabre>
 		<address-book-plugins>
 			<plugin>OCA\ContactsInteraction\AddressBookProvider</plugin>

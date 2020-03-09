@@ -9,6 +9,7 @@ return array(
     'OCA\\ContactsInteraction\\AddressBook' => $baseDir . '/../lib/AddressBook.php',
     'OCA\\ContactsInteraction\\AddressBookProvider' => $baseDir . '/../lib/AddressBookProvider.php',
     'OCA\\ContactsInteraction\\AppInfo\\Application' => $baseDir . '/../lib/AppInfo/Application.php',
+    'OCA\\ContactsInteraction\\BackgroundJob\\CleanupJob' => $baseDir . '/../lib/BackgroundJob/CleanupJob.php',
     'OCA\\ContactsInteraction\\Card' => $baseDir . '/../lib/Card.php',
     'OCA\\ContactsInteraction\\Db\\CardSearchDao' => $baseDir . '/../lib/Db/CardSearchDao.php',
     'OCA\\ContactsInteraction\\Db\\RecentContact' => $baseDir . '/../lib/Db/RecentContact.php',

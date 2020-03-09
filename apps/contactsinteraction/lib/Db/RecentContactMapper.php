@@ -56,8 +56,8 @@ class RecentContactMapper extends QBMapper {
 	 * @param string $uid
 	 * @param int $id
 	 *
-	 * @throws DoesNotExistException
 	 * @return RecentContact
+	 * @throws DoesNotExistException
 	 */
 	public function find(string $uid, int $id): RecentContact {
 		$qb = $this->db->getQueryBuilder();
@@ -103,6 +103,16 @@ class RecentContactMapper extends QBMapper {
 			->andWhere($qb->expr()->eq('actor_uid', $qb->createNamedParameter($user->getUID())));
 
 		return $this->findEntities($select);
+	}
+
+	public function cleanUp(int $olderThan): void {
+		$qb = $this->db->getQueryBuilder();
+
+		$delete = $qb
+			->delete($this->getTableName())
+			->where($qb->expr()->lt('last_contact', $qb->createNamedParameter($olderThan)));
+
+		$delete->execute();
 	}
 
 }
