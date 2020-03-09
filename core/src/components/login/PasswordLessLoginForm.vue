@@ -9,7 +9,7 @@
 			:aria-label="t('core', 'Username or email')"
 			required>
 
-		<button @:click="authenticate">
+		<button v-on:click="authenticate">
 			Login
 		</button>
 
