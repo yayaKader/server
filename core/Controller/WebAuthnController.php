@@ -31,6 +31,7 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\ISession;
+use OCP\Util;
 use Webauthn\PublicKeyCredentialRequestOptions;
 
 class WebAuthnController extends Controller {
@@ -61,8 +62,17 @@ class WebAuthnController extends Controller {
 	 * @PublicPage
 	 * @UseSession
 	 */
-	public function startAuthentication(string $uid): JSONResponse {
+	public function startAuthentication(string $loginName): JSONResponse {
 		$this->logger->debug('Starting WebAuthn login');
+
+		$this->logger->debug('Converting login name to UID');
+		$uid = $loginName;
+		Util::emitHook(
+			'\OCA\Files_Sharing\API\Server2Server',
+			'preLoginNameUsedAsUserName',
+			array('uid' => &$uid)
+		);
+		$this->logger->debug('Got UID: ' . $uid);
 
 		$publicKeyCredentialRequestOptions = $this->webAuthnManger->startAuthentication($uid, $this->request->getServerHost());
 		$this->session->set(self::WEBAUTHN_LOGIN, json_encode($publicKeyCredentialRequestOptions));
@@ -79,7 +89,7 @@ class WebAuthnController extends Controller {
 	public function finishAuthentication(string $data): JSONResponse {
 		$this->logger->debug('Validating WebAuthn login');
 
-		if (!$this->session->exists(self::WEBAUTHN_LOGIN)) {
+		if (!$this->session->exists(self::WEBAUTHN_LOGIN) || !$this->session->exists(self::WEBAUTHN_LOGIN_UID)) {
 			$this->logger->debug('Trying to finish WebAuthn login without session data');
 			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
 		}

@@ -1,5 +1,7 @@
+<?php
+declare(strict_types=1);
 /**
- * @copyright 2020, Roeland Jago Douma <roeland@famdouma.nl>
+ * @copyright Copyright (c) 2020, Roeland Jago Douma <roeland@famdouma.nl>
  *
  * @author Roeland Jago Douma <roeland@famdouma.nl>
  *
@@ -17,21 +19,5 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
-
-import Axios from '@nextcloud/axios'
-import { generateUrl } from '@nextcloud/router'
-
-export function startAuthentication(loginName) {
-	const url = generateUrl('/login/webauthn/start')
-
-	return Axios.post(url, { loginName })
-		.then(resp => resp.data)
-}
-
-export function finishAuthentication(data) {
-	const url = generateUrl('/login/webauthn/finish')
-
-	return Axios.post(url, { data })
-		.then(resp => resp.data)
-}
