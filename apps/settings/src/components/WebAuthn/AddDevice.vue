@@ -21,7 +21,7 @@
 
 <template>
 	<div v-if="step === RegistrationSteps.READY">
-		<button @:click="start">
+		<button v-on:click="start">
 			{{ t('settings', 'Add Webauthn device') }}
 		</button>
 	</div>
