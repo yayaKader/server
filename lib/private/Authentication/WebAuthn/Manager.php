@@ -24,10 +24,13 @@ declare(strict_types=1);
 
 namespace OC\Authentication\WebAuthn;
 
+use Cose\Algorithm\Signature\ECDSA\ES256;
+use Cose\Algorithm\Signature\RSA\RS256;
 use Cose\Algorithms;
 use GuzzleHttp\Psr7\ServerRequest;
 use OC\Authentication\WebAuthn\Db\PublicKeyCredentialEntity;
 use OC\Authentication\WebAuthn\Db\PublicKeyCredentialMapper;
+use OCP\ILogger;
 use OCP\IUser;
 use Webauthn\AttestationStatement\AttestationObjectLoader;
 use Webauthn\AttestationStatement\AttestationStatementSupportManager;
@@ -52,14 +55,21 @@ class Manager {
 
 	/** @var CredentialRepository */
 	private $repository;
-	/**
-	 * @var PublicKeyCredentialMapper
-	 */
+
+	/** @var PublicKeyCredentialMapper */
 	private $credentialMapper;
 
-	public function __construct(CredentialRepository $repository, PublicKeyCredentialMapper $credentialMapper) {
+	/** @var ILogger */
+	private $logger;
+
+	public function __construct(
+		CredentialRepository $repository,
+		PublicKeyCredentialMapper $credentialMapper,
+		ILogger $logger
+	) {
 		$this->repository = $repository;
 		$this->credentialMapper = $credentialMapper;
+		$this->logger = $logger;
 	}
 
 	public function startRegistration(IUser $user, string $serverHost): PublicKeyCredentialCreationOptions {
@@ -173,7 +183,7 @@ class Manager {
 		);
 	}
 
-	public function finishAuthentication(PublicKeyCredentialRequestOptions $publicKeyCredentialRequestOptions, string $data) {
+	public function finishAuthentication(PublicKeyCredentialRequestOptions $publicKeyCredentialRequestOptions, string $data, string $uid) {
 		$attestationStatementSupportManager = new AttestationStatementSupportManager();
 		$attestationStatementSupportManager->add(new NoneAttestationStatementSupport());
 
@@ -183,6 +193,8 @@ class Manager {
 		$tokenBindingHandler = new TokenBindingNotSupportedHandler();
 		$extensionOutputCheckerHandler = new ExtensionOutputCheckerHandler();
 		$algorithmManager = new \Cose\Algorithm\Manager();
+		$algorithmManager->add(new ES256());
+		$algorithmManager->add(new RS256());
 
 		$authenticatorAssertionResponseValidator = new AuthenticatorAssertionResponseValidator(
 			$this->repository,
@@ -192,6 +204,7 @@ class Manager {
 		);
 
 		try {
+			$this->logger->debug('Loading publickey credentials from: ' . $data);
 
 			// Load the data
 			$publicKeyCredential = $publicKeyCredentialLoader->load($data);
@@ -210,7 +223,7 @@ class Manager {
 				$response,
 				$publicKeyCredentialRequestOptions,
 				$request,
-				null
+				$uid
 			);
 
 		} catch (\Throwable $e) {

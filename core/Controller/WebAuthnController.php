@@ -36,6 +36,7 @@ use Webauthn\PublicKeyCredentialRequestOptions;
 class WebAuthnController extends Controller {
 
 	private const WEBAUTHN_LOGIN = 'webauthn_login';
+	private const WEBAUTHN_LOGIN_UID = 'webauthn_login_uid';
 
 	/** @var Manager */
 	private $webAuthnManger;
@@ -65,6 +66,7 @@ class WebAuthnController extends Controller {
 
 		$publicKeyCredentialRequestOptions = $this->webAuthnManger->startAuthentication($uid, $this->request->getServerHost());
 		$this->session->set(self::WEBAUTHN_LOGIN, json_encode($publicKeyCredentialRequestOptions));
+		$this->session->set(self::WEBAUTHN_LOGIN_UID, $uid);
 
 		return new JSONResponse($publicKeyCredentialRequestOptions);
 	}
@@ -85,7 +87,7 @@ class WebAuthnController extends Controller {
 		// Obtain the publicKeyCredentialOptions from when we started the registration
 		$publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions::createFromString($this->session->get(self::WEBAUTHN_LOGIN));
 
-		$this->webAuthnManger->finishAuthentication($publicKeyCredentialRequestOptions, $data);
+		$this->webAuthnManger->finishAuthentication($publicKeyCredentialRequestOptions, $data, $this->session->get(self::WEBAUTHN_LOGIN_UID));
 
 		return new JSONResponse([]);
 	}

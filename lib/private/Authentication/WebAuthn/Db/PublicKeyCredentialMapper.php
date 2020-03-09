@@ -38,10 +38,10 @@ class PublicKeyCredentialMapper extends QBMapper {
 		$qb->select('*')
 			->from($this->getTableName())
 			->where(
-				$qb->expr()->eq('publicKeyCredentialId', $qb->createNamedParameter(base64_encode($publicKeyCredentialId)))
+				$qb->expr()->eq('public_key_credential_id', $qb->createNamedParameter(base64_encode($publicKeyCredentialId)))
 			);
 
-		return $this->findOneQuery($qb);
+		return $this->findEntity($qb);
 	}
 
 	/**

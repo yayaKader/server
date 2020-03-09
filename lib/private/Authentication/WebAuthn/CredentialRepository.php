@@ -70,6 +70,10 @@ class CredentialRepository implements PublicKeyCredentialSourceRepository {
 
 		}
 
+		if ($name === null) {
+			$name = 'default';
+		}
+
 		$entity = PublicKeyCredentialEntity::fromPublicKeyCrendentialSource($name, $publicKeyCredentialSource);
 
 		if ($oldEntity) {

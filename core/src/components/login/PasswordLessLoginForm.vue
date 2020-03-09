@@ -87,12 +87,14 @@ export default {
 		},
 		sign(publicKey) {
 			const arrayToBase64String = function(a) {
-				btoa(String.fromCharCode(...a))
+				return window.btoa(String.fromCharCode(...a))
 			}
 
 			return navigator.credentials.get({ publicKey })
 				.then(data => {
 					console.debug(data)
+					console.debug(new Uint8Array(data.rawId))
+					console.debug(arrayToBase64String(new Uint8Array(data.rawId)))
 					return {
 						id: data.id,
 						type: data.type,

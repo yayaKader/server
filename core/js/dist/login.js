@@ -25530,13 +25530,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     sign: function sign(publicKey) {
       var arrayToBase64String = function arrayToBase64String(a) {
-        btoa(String.fromCharCode.apply(String, _toConsumableArray(a)));
+        return window.btoa(String.fromCharCode.apply(String, _toConsumableArray(a)));
       };
 
       return navigator.credentials.get({
         publicKey: publicKey
       }).then(function (data) {
         console.debug(data);
+        console.debug(new Uint8Array(data.rawId));
+        console.debug(arrayToBase64String(new Uint8Array(data.rawId)));
         return {
           id: data.id,
           type: data.type,
