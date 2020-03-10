@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace OC\Core\Controller;
 
+use OC\Authentication\Login\LoginData;
+use OC\Authentication\Login\WebAuthnChain;
 use OC\Authentication\WebAuthn\Manager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -44,17 +46,20 @@ class WebAuthnController extends Controller {
 
 	/** @var ISession */
 	private $session;
-	/**
-	 * @var ILogger
-	 */
+
+	/** @var ILogger */
 	private $logger;
 
-	public function __construct($appName, IRequest $request, Manager $webAuthnManger, ISession $session, ILogger $logger) {
+	/** @var WebAuthnChain */
+	private $webAuthnChain;
+
+	public function __construct($appName, IRequest $request, Manager $webAuthnManger, ISession $session, ILogger $logger, WebAuthnChain $webAuthnChain) {
 		parent::__construct($appName, $request);
 
 		$this->webAuthnManger = $webAuthnManger;
 		$this->session = $session;
 		$this->logger = $logger;
+		$this->webAuthnChain = $webAuthnChain;
 	}
 
 	/**
@@ -96,8 +101,16 @@ class WebAuthnController extends Controller {
 
 		// Obtain the publicKeyCredentialOptions from when we started the registration
 		$publicKeyCredentialRequestOptions = PublicKeyCredentialRequestOptions::createFromString($this->session->get(self::WEBAUTHN_LOGIN));
+		$uid = $this->session->get(self::WEBAUTHN_LOGIN_UID);
+		$this->webAuthnManger->finishAuthentication($publicKeyCredentialRequestOptions, $data, $uid);
 
-		$this->webAuthnManger->finishAuthentication($publicKeyCredentialRequestOptions, $data, $this->session->get(self::WEBAUTHN_LOGIN_UID));
+		//TODO: add other parameters
+		$loginData = new LoginData(
+			$this->request,
+			$uid,
+			''
+		);
+		$this->webAuthnChain->process($loginData);
 
 		return new JSONResponse([]);
 	}

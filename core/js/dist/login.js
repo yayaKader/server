@@ -7139,10 +7139,10 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-function startAuthentication(uid) {
+function startAuthentication(loginName) {
   var url = Object(_nextcloud_router__WEBPACK_IMPORTED_MODULE_1__["generateUrl"])('/login/webauthn/start');
   return _nextcloud_axios__WEBPACK_IMPORTED_MODULE_0___default.a.post(url, {
-    uid: uid
+    loginName: loginName
   }).then(function (resp) {
     return resp.data;
   });
