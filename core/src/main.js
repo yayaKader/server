@@ -20,6 +20,8 @@
  */
 
 import $ from 'jquery'
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 import './Polyfill/index'
 
 // If you remove the line below, tests won't pass
