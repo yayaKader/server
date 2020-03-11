@@ -176,8 +176,8 @@ class Application extends App {
 
 				$schema = new SchemaWrapper($container->query(IDBConnection::class));
 
-				if ($schema->hasTable('share')) {
-					$table = $schema->getTable('share');
+				if ($schema->hasTable('comments')) {
+					$table = $schema->getTable('comments');
 
 					if (!$table->hasColumn('reference_id')) {
 						$subject->addHintForMissingColumn($table->getName(), 'reference_id');
