@@ -9,7 +9,7 @@ module.exports = {
 			{
 				modules: false,
 				corejs: 3,
-				useBuiltIns: "entry",
+				useBuiltIns: "usage",
 			}
 		]
 	]
