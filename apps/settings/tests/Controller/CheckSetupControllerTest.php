@@ -577,6 +577,7 @@ class CheckSetupControllerTest extends TestCase {
 				'isSqliteUsed' => false,
 				'databaseConversionDocumentation' => 'http://docs.example.org/server/go.php?to=admin-db-conversion',
 				'missingIndexes' => [],
+				'missingColumns' => [],
 				'isPHPMailerUsed' => false,
 				'mailSettingsDocumentation' => 'https://server/index.php/settings/admin',
 				'isMemoryLimitSufficient' => true,
