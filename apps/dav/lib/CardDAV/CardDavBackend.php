@@ -454,7 +454,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 	 */
 	function deleteAddressBook($addressBookId) {
 		$query = $this->db->getQueryBuilder();
-		$query->delete('cards')
+		$query->delete($this->dbCardsTable)
 			->where($query->expr()->eq('addressbookid', $query->createParameter('addressbookid')))
 			->setParameter('addressbookid', $addressBookId)
 			->execute();
@@ -499,7 +499,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 	function getCards($addressBookId) {
 		$query = $this->db->getQueryBuilder();
 		$query->select(['id', 'uri', 'lastmodified', 'etag', 'size', 'carddata', 'uid'])
-			->from('cards')
+			->from($this->dbCardsTable)
 			->where($query->expr()->eq('addressbookid', $query->createNamedParameter($addressBookId)));
 
 		$cards = [];
@@ -530,7 +530,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 	function getCard($addressBookId, $cardUri) {
 		$query = $this->db->getQueryBuilder();
 		$query->select(['id', 'uri', 'lastmodified', 'etag', 'size', 'carddata', 'uid'])
-			->from('cards')
+			->from($this->dbCardsTable)
 			->where($query->expr()->eq('addressbookid', $query->createNamedParameter($addressBookId)))
 			->andWhere($query->expr()->eq('uri', $query->createNamedParameter($cardUri)))
 			->setMaxResults(1);
@@ -568,7 +568,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select(['id', 'uri', 'lastmodified', 'etag', 'size', 'carddata', 'uid'])
-			->from('cards')
+			->from($this->dbCardsTable)
 			->where($query->expr()->eq('addressbookid', $query->createNamedParameter($addressBookId)))
 			->andWhere($query->expr()->in('uri', $query->createParameter('uri')));
 
@@ -617,7 +617,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 
 		$q = $this->db->getQueryBuilder();
 		$q->select('uid')
-			->from('cards')
+			->from($this->dbCardsTable)
 			->where($q->expr()->eq('addressbookid', $q->createNamedParameter($addressBookId)))
 			->andWhere($q->expr()->eq('uid', $q->createNamedParameter($uid)))
 			->setMaxResults(1);
@@ -683,7 +683,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 		$uid = $this->getUID($cardData);
 		$etag = md5($cardData);
 		$query = $this->db->getQueryBuilder();
-		$query->update('cards')
+		$query->update($this->dbCardsTable)
 			->set('carddata', $query->createNamedParameter($cardData, IQueryBuilder::PARAM_LOB))
 			->set('lastmodified', $query->createNamedParameter(time()))
 			->set('size', $query->createNamedParameter(strlen($cardData)))
@@ -719,7 +719,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 			$cardId = null;
 		}
 		$query = $this->db->getQueryBuilder();
-		$ret = $query->delete('cards')
+		$ret = $query->delete($this->dbCardsTable)
 			->where($query->expr()->eq('addressbookid', $query->createNamedParameter($addressBookId)))
 			->andWhere($query->expr()->eq('uri', $query->createNamedParameter($cardUri)))
 			->execute();
