@@ -939,6 +939,7 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 		$result->closeCursor();
 
 		return array_map(function($array) {
+			$array['etag'] = '"' . $array['etag'] . '"';
 			$array['carddata'] = $this->readBlob($array['carddata']);
 			return $array;
 		}, $cards);
@@ -1004,6 +1005,8 @@ class CardDavBackend implements BackendInterface, SyncSupport {
 		$queryResult->closeCursor();
 
 		if (is_array($contact)) {
+			$contact['etag'] = '"' . $contact['etag'] . '"';
+			$contact['carddata'] = $this->readBlob($contact['carddata']);
 			$result = $contact;
 		}
 
