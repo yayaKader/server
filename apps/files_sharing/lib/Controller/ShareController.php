@@ -47,6 +47,7 @@ use OC\Security\CSP\ContentSecurityPolicy;
 use OCA\FederatedFileSharing\FederatedShareProvider;
 use OCA\Files_Sharing\Activity\Providers\Downloads;
 use OCA\Viewer\Event\LoadViewer;
+use OCP\Accounts\IAccountManager;
 use OCP\AppFramework\AuthPublicShareController;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\Template\ExternalShareMenuAction;
@@ -64,6 +65,7 @@ use OCP\IPreview;
 use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
+use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Share;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -93,6 +95,8 @@ class ShareController extends AuthPublicShareController {
 	protected $rootFolder;
 	/** @var FederatedShareProvider */
 	protected $federatedShareProvider;
+	/** @var IAccountManager */
+	protected $accountManager;
 	/** @var EventDispatcherInterface */
 	protected $eventDispatcher;
 	/** @var IL10N */
@@ -118,6 +122,7 @@ class ShareController extends AuthPublicShareController {
 	 * @param IPreview $previewManager
 	 * @param IRootFolder $rootFolder
 	 * @param FederatedShareProvider $federatedShareProvider
+	 * @param IAccountManager $accountManager
 	 * @param EventDispatcherInterface $eventDispatcher
 	 * @param IL10N $l10n
 	 * @param Defaults $defaults
@@ -134,6 +139,7 @@ class ShareController extends AuthPublicShareController {
 								IPreview $previewManager,
 								IRootFolder $rootFolder,
 								FederatedShareProvider $federatedShareProvider,
+								IAccountManager $accountManager,
 								EventDispatcherInterface $eventDispatcher,
 								IL10N $l10n,
 								Defaults $defaults) {
@@ -146,6 +152,7 @@ class ShareController extends AuthPublicShareController {
 		$this->previewManager = $previewManager;
 		$this->rootFolder = $rootFolder;
 		$this->federatedShareProvider = $federatedShareProvider;
+		$this->accountManager = $accountManager;
 		$this->eventDispatcher = $eventDispatcher;
 		$this->l10n = $l10n;
 		$this->defaults = $defaults;
@@ -326,8 +333,20 @@ class ShareController extends AuthPublicShareController {
 		}
 
 		$shareTmpl = [];
-		$shareTmpl['displayName'] = $this->userManager->get($share->getShareOwner())->getDisplayName();
-		$shareTmpl['owner'] = $share->getShareOwner();
+		$shareTmpl['owner'] = '';
+		$shareTmpl['shareOwner'] = '';
+
+		$owner = $this->userManager->get($share->getShareOwner());
+		if ($owner instanceof IUser) {
+			$ownerAccount = $this->accountManager->getAccount($owner);
+
+			$ownerName = $ownerAccount->getProperty(IAccountManager::PROPERTY_DISPLAYNAME);
+			if ($ownerName->getScope() === IAccountManager::VISIBILITY_PUBLIC) {
+				$shareTmpl['owner'] = $owner->getUID();
+				$shareTmpl['shareOwner'] = $owner->getDisplayName();
+			}
+		}
+
 		$shareTmpl['filename'] = $shareNode->getName();
 		$shareTmpl['directory_path'] = $share->getTarget();
 		$shareTmpl['note'] = $share->getNote();
@@ -394,7 +413,6 @@ class ShareController extends AuthPublicShareController {
 		$shareTmpl['showgridview'] = false;
 
 		$shareTmpl['hideFileList'] = $hideFileList;
-		$shareTmpl['shareOwner'] = $this->userManager->get($share->getShareOwner())->getDisplayName();
 		$shareTmpl['downloadURL'] = $this->urlGenerator->linkToRouteAbsolute('files_sharing.sharecontroller.downloadShare', ['token' => $this->getToken()]);
 		$shareTmpl['shareUrl'] = $this->urlGenerator->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', ['token' => $this->getToken()]);
 		$shareTmpl['maxSizeAnimateGif'] = $this->config->getSystemValue('max_filesize_animated_gifs_public_sharing', 10);
@@ -477,7 +495,9 @@ class ShareController extends AuthPublicShareController {
 
 		$response = new PublicTemplateResponse($this->appName, 'public', $shareTmpl);
 		$response->setHeaderTitle($shareTmpl['filename']);
-		$response->setHeaderDetails($this->l10n->t('shared by %s', [$shareTmpl['displayName']]));
+		if ($shareTmpl['shareOwner'] !== '') {
+			$response->setHeaderDetails($this->l10n->t('shared by %s', [$shareTmpl['shareOwner']]));
+		}
 
 		$isNoneFileDropFolder = $shareIsFolder === false || $share->getPermissions() !== \OCP\Constants::PERMISSION_CREATE;
 
@@ -489,7 +509,7 @@ class ShareController extends AuthPublicShareController {
 			$download = new SimpleMenuAction('download', $this->l10n->t('Download'), 'icon-download', $shareTmpl['downloadURL'], 10, $shareTmpl['fileSize']);
 			$downloadAll = new SimpleMenuAction('download', $this->l10n->t('Download all files'), 'icon-download', $shareTmpl['downloadURL'], 10, $shareTmpl['fileSize']);
 			$directLink = new LinkMenuAction($this->l10n->t('Direct link'), 'icon-public', $shareTmpl['previewURL']);
-			$externalShare = new ExternalShareMenuAction($this->l10n->t('Add to your Nextcloud'), 'icon-external', $shareTmpl['owner'], $shareTmpl['displayName'], $shareTmpl['filename']);
+			$externalShare = new ExternalShareMenuAction($this->l10n->t('Add to your Nextcloud'), 'icon-external', $shareTmpl['owner'], $shareTmpl['shareOwner'], $shareTmpl['filename']);
 
 			$responseComposer = [];
 
