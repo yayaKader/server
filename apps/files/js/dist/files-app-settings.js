@@ -71,5 +71,5 @@ var c=function(){function t(){!function(t,e){if(!(t instanceof e))throw new Type
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-i.default.prototype.t=t,window.OCA.Files||(window.OCA.Files={}),Object.assign(window.OCA.Files,{Settings:new c}),Object.assign(window.OCA.Files.Settings,{Setting:g}),window.addEventListener("DOMContentLoaded",(function(){new i.default({el:"#files-app-settings",render:function(t){return t(p)}}),document.getElementById("app-settings-header").addEventListener("click",(function(t){var e=t.currentTarget.children[0].classList.contains("opened");OCA.Files.Settings.settings.forEach((function(t){return e?t.close():t.open()}))}))}))}});
+i.default.prototype.t=t,window.OCA.Files||(window.OCA.Files={}),Object.assign(window.OCA.Files,{Settings:new c}),Object.assign(window.OCA.Files.Settings,{Setting:g}),window.addEventListener("DOMContentLoaded",(function(){new i.default({el:"#files-app-settings",render:function(t){return t(p)}});var t=document.getElementById("app-settings-header");t&&t.addEventListener("click",(function(t){var e=t.currentTarget.children[0].classList.contains("opened");OCA.Files.Settings.settings.forEach((function(t){return e?t.close():t.open()}))}))}))}});
 //# sourceMappingURL=files-app-settings.js.map

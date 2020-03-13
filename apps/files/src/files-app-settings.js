@@ -43,8 +43,11 @@ window.addEventListener('DOMContentLoaded', () => {
 		render: h => h(SettingsView),
 	})
 
-	document.getElementById('app-settings-header').addEventListener('click', e => {
-		const opened = e.currentTarget.children[0].classList.contains('opened')
-		OCA.Files.Settings.settings.forEach(e => opened ? e.close() : e.open())
-	})
+	const appSettingsHeader = document.getElementById('app-settings-header')
+	if (appSettingsHeader) {
+		appSettingsHeader.addEventListener('click', e => {
+			const opened = e.currentTarget.children[0].classList.contains('opened')
+			OCA.Files.Settings.settings.forEach(e => opened ? e.close() : e.open())
+		})
+	}
 })
